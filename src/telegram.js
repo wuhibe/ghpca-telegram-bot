@@ -7,14 +7,16 @@ const webAppUrl = process.env.APP_URI;
 
 async function getMe(req, res) {
   const url = `${telegramUrl}/getMe`;
-  const response = await axios.get(url);
-  return res.json(await response);
+  await axios.get(url)
+    .then(response => res.json(response.data))
+    .catch(error => res.json(error));
 }
 
 async function setWebhook(req, res) {
   const url = `${telegramUrl}/setWebhook?url=${webAppUrl}`;
-  const response = await axios.get(url);
-  return res.json(await response);
+  await axios.get(url)
+    .then(response => res.json(response.data))
+    .catch(error => res.json(error));
 }
 
 async function sendMessage(id, text, inline_keyboard = null) {
@@ -25,8 +27,9 @@ async function sendMessage(id, text, inline_keyboard = null) {
   }
   else
     url = `${telegramUrl}/sendMessage?chat_id=${id}&text=${encodeURIComponent(text)}`;
-  const response = await axios.get(url);
-  return await response;
+  axios.get(url)
+    .then(response => response.data)
+    .catch(error => error);
 }
 
 async function editMessage(id, messageId, text, inline_keyboard = null) {
