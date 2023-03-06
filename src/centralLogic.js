@@ -144,11 +144,16 @@ async function addNewRecord(id) {
   addSession(id);
   let procedures = await allProcedures();
 
-  let callBacks = procedures.map((item) => {
-    return [{ text: item.name, callback_data: `procedure_${item.name}` }];
-  });
+  if (procedures && procedures.length != 0) {
+    let callBacks = []
+    procedures.forEach(item => {
+      callBacks.push([{ text: item.name, callback_data: `procedure_${item.name}` }]);
+    });
 
-  sendMessage(id, 'Please select a procedure:', callBacks);
+    sendMessage(id, 'Please select a procedure:', callBacks);
+  } else {
+    sendMessage(id, 'Something isn\'t right. Please try again later.');
+  }
 }
 
 function recordMessage(id, text, date) {
