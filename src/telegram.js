@@ -40,8 +40,9 @@ async function editMessage(id, messageId, text, inline_keyboard = null) {
   }
   else
     url = `${telegramUrl}/editMessageText?chat_id=${id}&message_id=${messageId}&text=${encodeURIComponent(text)}`;
-  const response = await axios.get(url);
-  return await response;
+  await axios.get(url)
+    .then(response => response.data)
+    .catch(error => error);
 }
 
 module.exports = {

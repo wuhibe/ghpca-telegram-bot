@@ -24,6 +24,8 @@ const findUserById = (id) => {
     });
 };
 
-exports.userModel = User;
-exports.createUser = createUser;
-exports.findUserById = findUserById;
+module.exports = {
+  userModel: User,
+  createUser: createUser,
+  findUserById: findUserById
+};
