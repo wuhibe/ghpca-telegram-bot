@@ -5,6 +5,7 @@ const { createRecord } = require('./recordData');
 
 const {
   addUser,
+  getUser,
   isValidUser,
   adminAddUser,
   blacklistUser,
@@ -17,7 +18,12 @@ const {
   updateSession,
 } = require('./sessionManagement');
 
-const { allProcedures, updateProcedureCount, getProcedureDetail } = require('../models/procedures');
+const {
+  allProcedures,
+  updateProcedureCount,
+  PROCEDURES,
+  getProcedureDetail,
+} = require('../models/procedures');
 
 const adminID = process.env.ADMIN_ID;
 
@@ -118,7 +124,7 @@ async function handleCallbacks(data) {
   }
 }
 
-function addRecord(id,  patient) {
+function addRecord(id, patient) {
   let session = getSession(id);
   let user = getUser(id);
   let record = {

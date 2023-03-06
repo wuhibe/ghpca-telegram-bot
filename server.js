@@ -6,7 +6,6 @@ const { loadProcedures } = require('./models/procedures');
 
 const app = express();
 
-var procedures = [];
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
@@ -25,7 +24,7 @@ app.post('/', async (req, res) => {
 });
 
 async function startProcess() {
-  procedures = await loadProcedures();
+  await loadProcedures();
   app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
   });

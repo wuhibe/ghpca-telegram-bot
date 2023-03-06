@@ -14,16 +14,25 @@ async function isValidUser(id) {
   return user.status;
 }
 
+async function getUser(id) {
+  let user = await findUserById(id);
+  if (!user || !user[0]) {
+    user = user[user.length - 1];
+    return user;
+  }
+  return null;
+}
+
 async function addUser(id, username, first_name) {
   let user = await findUserById(id);
-  if (!user) {
-    user = {
+  if (!user || !user[0]) {
+    let u = {
       id,
       username,
       first_name,
       status: 1,
     };
-    createUser(user);
+    createUser(u);
   } else {
     user = user[0];
     user.status = 1;
@@ -68,6 +77,7 @@ async function blacklistUser(id, username, first_name) {
 
 module.exports = {
   isValidUser,
+  getUser,
   addUser,
   adminAddUser,
   blacklistUser,

@@ -14,8 +14,8 @@ const removeSessionById = (id) => {
 
 const createSession = (session) => {
   removeSessionById(session.id);
-  let session = new Session(session);
-  session.save();
+  let newSession = new Session(session);
+  newSession.save();
 };
 
 const findSessionById = async (id) => {
@@ -23,7 +23,6 @@ const findSessionById = async (id) => {
     .then((p) => p)
     .catch((err) => null);
 };
-
 
 module.exports = {
   Session,
