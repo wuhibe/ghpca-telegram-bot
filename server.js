@@ -15,12 +15,12 @@ app.get('/setWebHook', setWebhook);
 
 app.get('/bot', getMe);
 
-app.post("/", (req, res) => {
+app.post("/", async (req, res) => {
   if (req.body.callback_query) {
-    handleCallbacks(req.body);
+    await handleCallbacks(req.body);
   }
   else {
-    parseRequest(req.body);
+    await parseRequest(req.body);
   }
   return res.send("OK");
 });

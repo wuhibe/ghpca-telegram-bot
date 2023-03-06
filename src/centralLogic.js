@@ -4,7 +4,7 @@ const { addUser, isValidUser, adminAddUser, blacklistUser } = require('./userMan
 const adminID = process.env.ADMIN_ID;
 
 
-function parseRequest(data) {
+async function parseRequest(data) {
   try {
     var text = data.message.text;
     var userId = data.message.chat.id;
@@ -14,7 +14,7 @@ function parseRequest(data) {
     if (text.startsWith('/')) {
       return processCommands(userId, first_name, username, text);
     }
-    else if (isValidUser(userId) != 1) {
+    else if (await isValidUser(userId) != 1) {
       return;
     }
     recordMessage(userId, text, new Date());
@@ -24,11 +24,11 @@ function parseRequest(data) {
   }
 }
 
-function processCommands(userId, first_name, username, text) {
+async function processCommands(userId, first_name, username, text) {
   if (text == '/start') {
-    if (isValidUser(userId) == 1)
+    if (await isValidUser(userId) == 1)
       sendMessage(userId, "Welcome to the bot. Select /help to see the available commands.");
-    else if (isValidUser(userId) == 0) {
+    else if (await isValidUser(userId) == 0) {
       sendMessage(userId, "You are not registered to use this bot.");
       adminAddUser(userId, first_name, username);
     }

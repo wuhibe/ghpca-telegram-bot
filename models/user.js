@@ -13,15 +13,10 @@ const createUser = (user) => {
   usr.save();
 };
 
-const findUserById = (id) => {
-  User.find({ id: id })
-    .then((p) => {
-      return p;
-    })
-    .catch((err) => {
-      console.log(err);
-      return null;
-    });
+const findUserById = async (id) => {
+  return await User.find({ id: id })
+    .then(p => p)
+    .catch(err => null);
 };
 
 module.exports = {
