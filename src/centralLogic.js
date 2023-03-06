@@ -147,7 +147,7 @@ async function addNewRecord(id) {
     id,
     'Please select a procedure:',
     procedures.map((item) => {
-      return [{ text: item, callback_data: `procedure_${item}` }];
+      return [{ text: item.name, callback_data: `procedure_${item.name}` }];
     })
   );
 }

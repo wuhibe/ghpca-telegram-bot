@@ -22,16 +22,18 @@ async function loadProcedures() {
 async function loadTotalData() {
   let response = await axios.get(`${sheetsUrl}`);
   let data = (await response).data;
+  let names = [];
   let procedures = [];
   for (let i = 1; i < data.length; i++) {
     for (let j = 1; j < data[i].length; j++) {
-      if (data[i][j] && data[i][j] != []) {
+      if (data[i][j] && data[i][j] != [] && names.indexOf(data[0][j]) == -1) {
         let procedure = {
           name: data[0][j],
           hospital: data[i][0],
           count: data[i][j],
         };
         procedures.push(procedure);
+        names.push(data[0][j]);
       }
     }
   }
