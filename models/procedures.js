@@ -51,7 +51,7 @@ async function allProcedures(name) {
 }
 
 async function getProcedure(name, hospital) {
-  return await Procedure.find({ name, hospital })
+  return await Procedure.findOne({ name, hospital })
     .then((p) => p)
     .catch((err) => null);
 }
