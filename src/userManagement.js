@@ -1,23 +1,21 @@
 require('dotenv').config();
 
-const { createUser, findUserById } = require('../models/user');
+const { createUser, findUserById, updateUserStatus } = require('../models/user');
 const { sendMessage } = require('./telegram');
 
 const adminID = process.env.ADMIN_ID;
 
 async function isValidUser(id) {
   let user = await findUserById(id);
-  if (!user || !user[0]) {
+  if (!user) {
     return 0;
   }
-  user = user[user.length - 1];
   return user.status;
 }
 
 async function getUser(id) {
   let user = await findUserById(id);
-  if (!user || !user[0]) {
-    user = user[user.length - 1];
+  if (!user) {
     return user;
   }
   return null;
@@ -25,7 +23,7 @@ async function getUser(id) {
 
 async function addUser(id, username, first_name) {
   let user = await findUserById(id);
-  if (!user || !user[0]) {
+  if (!user) {
     let u = {
       id,
       username,
@@ -34,9 +32,7 @@ async function addUser(id, username, first_name) {
     };
     createUser(u);
   } else {
-    user = user[0];
-    user.status = 1;
-    user.save();
+    updateUserStatus(id, 1);
   }
 }
 
@@ -69,9 +65,7 @@ async function blacklistUser(id, username, first_name) {
     };
     createUser(user);
   } else {
-    user = user[0];
-    user.status = -1;
-    user.save();
+    updateUserStatus(id, -1);
   }
 }
 

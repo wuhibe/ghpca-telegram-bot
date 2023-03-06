@@ -14,13 +14,22 @@ const createUser = (user) => {
 };
 
 const findUserById = async (id) => {
-  return await User.find({ id: id })
+  let data = await User.findOne({ id: id })
     .then((p) => p)
     .catch((err) => null);
+  data = await data;
+  return data;
 };
 
+function updateUserStatus(id, status) {
+  User.findOneAndUpdate({ id: id }, { status: status })
+    .then((p) => p)
+    .catch((err) => null);
+}
+
 module.exports = {
-  userModel: User,
-  createUser: createUser,
-  findUserById: findUserById,
+  User,
+  createUser,
+  findUserById,
+  updateUserStatus
 };
