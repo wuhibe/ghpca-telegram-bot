@@ -8,15 +8,15 @@ const webAppUrl = process.env.APP_URI;
 async function getMe(req, res) {
   const url = `${telegramUrl}/getMe`;
   await axios.get(url)
-    .then(response => res.json(response.data))
-    .catch(error => res.json(error));
+    .then(response => res.send(response.data))
+    .catch(error => res.send(error));
 }
 
 async function setWebhook(req, res) {
   const url = `${telegramUrl}/setWebhook?url=${webAppUrl}`;
   await axios.get(url)
-    .then(response => res.json(response.data))
-    .catch(error => res.json(error));
+    .then(response => res.send(response.data))
+    .catch(error => res.send(error));
 }
 
 async function sendMessage(id, text, inline_keyboard = null) {
