@@ -19,13 +19,16 @@ const createSession = (session) => {
 };
 
 const findSessionById = async (id) => {
-  return await Session.find({ id: id })
+  return await Session.findOne({ id: id })
     .then((p) => p)
     .catch((err) => null);
 };
 
-function updateSession(id, procedure='', hospital='') {
-  Session.findOneAndUpdate({ id: id }, { procedure: procedure, hospital: hospital, date: new Date() })
+function updateSessionById(id, procedure = '', hospital = '') {
+  Session.findOneAndUpdate(
+    { id: id },
+    { procedure: procedure, hospital: hospital, date: new Date() }
+  )
     .then((p) => p)
     .catch((err) => null);
 }
@@ -34,6 +37,6 @@ module.exports = {
   Session,
   createSession,
   findSessionById,
-  updateSession,
+  updateSessionById,
   removeSessionById,
 };

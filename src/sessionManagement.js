@@ -3,16 +3,16 @@ require('dotenv').config();
 const {
   createSession,
   findSessionById,
-  updateSession,
+  updateSessionById,
   removeSessionById,
 } = require('../models/session');
 
 async function getSession(id) {
   let session = await findSessionById(id);
-  if (!session || !session[0]) {
-    return null;
+  if (session) {
+    return session;
   }
-  return session[session.length - 1];
+  return null;
 }
 
 async function addSession(id, procedure = null, hospital = null) {
@@ -26,7 +26,7 @@ async function addSession(id, procedure = null, hospital = null) {
     };
     createSession(session);
   } else {
-    updateSession(id, procedure, hospital);
+    updateSessionById(id, procedure, hospital);
   }
 }
 
@@ -45,7 +45,8 @@ async function updateSession(id, procedure = null, hospital = null) {
     };
     createSession(session);
   } else {
-    updateSession(id, procedure, hospital);
+    updateSessionById(id, procedure, hospital);
+  }
 }
 
 module.exports = {

@@ -1,6 +1,10 @@
 require('dotenv').config();
 
-const { createUser, findUserById, updateUserStatus } = require('../models/user');
+const {
+  createUser,
+  findUserById,
+  updateUserStatus,
+} = require('../models/user');
 const { sendMessage } = require('./telegram');
 
 const adminID = process.env.ADMIN_ID;
@@ -15,7 +19,7 @@ async function isValidUser(id) {
 
 async function getUser(id) {
   let user = await findUserById(id);
-  if (!user) {
+  if (user) {
     return user;
   }
   return null;

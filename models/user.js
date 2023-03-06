@@ -31,5 +31,5 @@ module.exports = {
   User,
   createUser,
   findUserById,
-  updateUserStatus
+  updateUserStatus,
 };
