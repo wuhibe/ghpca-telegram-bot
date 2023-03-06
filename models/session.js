@@ -8,9 +8,14 @@ let sessionSchema = new mongoose.Schema({
 });
 let Session = mongoose.model('Session', sessionSchema);
 
+const removeSessionById = (id) => {
+  Session.deleteMany({ id: id });
+};
+
 const createSession = (session) => {
-  let usr = new Session(session);
-  usr.save();
+  removeSessionById(session.id);
+  let session = new Session(session);
+  session.save();
 };
 
 const findSessionById = async (id) => {
@@ -19,9 +24,6 @@ const findSessionById = async (id) => {
     .catch((err) => null);
 };
 
-const removeSessionById = (id) => {
-  Session.deleteMany({ id: id });
-};
 
 module.exports = {
   Session,

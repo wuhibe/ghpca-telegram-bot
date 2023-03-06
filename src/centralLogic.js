@@ -1,6 +1,7 @@
 require('dotenv').config();
 
 const { sendMessage, editMessage } = require('./telegram');
+const { createRecord } = require('./recordData');
 
 const {
   addUser,
@@ -15,6 +16,8 @@ const {
   clearUserSession,
   updateSession,
 } = require('./sessionManagement');
+
+const { allProcedures, updateProcedureCount, getProcedureDetail } = require('../models/procedures');
 
 const adminID = process.env.ADMIN_ID;
 
@@ -92,7 +95,7 @@ async function handleCallbacks(data) {
   } else if (message.startsWith('procedure')) {
     let procedure = message.split('_')[1];
     await updateSession(userId, procedure);
-    chooseHospital(userId, msg);
+    chooseHospital(userId, procedure, msg);
   } else if (message.startsWith('hospital')) {
     let procedure = message.split('_')[1];
     let hospital = message.split('_')[2];
@@ -101,7 +104,7 @@ async function handleCallbacks(data) {
   } else if (message.startsWith('addRecord')) {
     let id = message.split('_')[1];
     let name = message.split('_')[2];
-    addRecord(id, msg, name);
+    addRecord(id, name);
   } else if (message.startsWith('cancelRecord')) {
     let id = message.split('_')[1];
     clearUserSession(id);
@@ -115,19 +118,30 @@ async function handleCallbacks(data) {
   }
 }
 
-function addRecord(id, msg, patient) {
-  // editMessage
-  return;
+function addRecord(id,  patient) {
+  let session = getSession(id);
+  let user = getUser(id);
+  let record = {
+    date: new Date(),
+    first_name: user.first_name,
+    username: user.username,
+    patient,
+    procedure: session.procedure,
+    hospital: session.hospital,
+  };
+  createRecord(record);
+  updateProcedureCount(session.procedure, session.hospital);
+  sendMessage(id, 'Record added successfully.');
 }
 
 function addNewRecord(id) {
   addSession(id);
-  populateProcedures();
+  let procedures = allProcedures();
 
   sendMessage(
     id,
     'Please select a procedure:',
-    PROCEDURES.map((item) => {
+    procedures.map((item) => {
       return [{ text: item, callback_data: `procedure_${item}` }];
     })
   );
@@ -149,12 +163,13 @@ function recordMessage(id, text, date) {
   completeRecord(id, text);
 }
 
-function chooseHospital(procedure) {
-  let p = getProcedure(procedure);
+function chooseHospital(id, msg, procedure) {
+  let p = getProcedureDetail(procedure);
   if (p) {
     let hospitals = Object.keys(p);
-    sendMessage(
+    editMessage(
       id,
+      msg,
       'Please select a hospital:',
       hospitals.map((item) => {
         return {
@@ -165,8 +180,9 @@ function chooseHospital(procedure) {
     );
   } else {
     clearUserSession(id);
-    sendMessage(
+    editMessage(
       id,
+      msg,
       'This Investigation/Service has been used up for this month.'
     );
   }

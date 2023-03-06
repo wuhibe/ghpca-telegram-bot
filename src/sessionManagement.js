@@ -6,10 +6,6 @@ const {
   removeSessionById,
 } = require('../models/session');
 
-const { sendMessage } = require('./telegram');
-
-const adminID = process.env.ADMIN_ID;
-
 async function getSession(id) {
   let session = await findSessionById(id);
   if (!session || !session[0]) {

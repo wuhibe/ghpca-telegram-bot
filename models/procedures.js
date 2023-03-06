@@ -2,9 +2,16 @@ const axios = require('axios');
 const mongoose = require('./database');
 require('dotenv').config();
 
-let sheetsUrl = process.env.SHEETS_URI;
+const sheetsUrl = process.env.SHEETS_URI;
 
 let PROCEDURES = [];
+
+let procedureSchema = new mongoose.Schema({
+  name: String,
+  hospital: String,
+  count: Number,
+});
+let Procedure = mongoose.model('Procedure', procedureSchema);
 
 async function loadProcedures() {
   let response = await axios.get(`${sheetsUrl}?route=procedures`);
@@ -12,7 +19,70 @@ async function loadProcedures() {
   return PROCEDURES;
 }
 
+async function loadTotalData() {
+  let response = await axios.get(`${sheetsUrl}`);
+  let data = await response;
+  let procedures = [];
+  for (let i = 1; i < data.length; i++) {
+    for (let j = 1; j < data[i].length; j++) {
+      if (data[i][j] && data[i][j] != []) {
+        let procedure = {
+          name: data[0][j],
+          hospital: data[i][0],
+          count: data[i][j],
+        };
+        procedures.push(procedure);
+      }
+    }
+  }
+  return procedures;
+}
+
+async function allProcedures(name) {
+  let procs = await loadTotalData();
+  procs.filter(async (p) => {
+    let detail = await getProcedure(p.name, p.hospital);
+    if (!detail) return p.count > 0;
+    else return p.count - detail.count > 0;
+  });
+  return procs;
+}
+
+async function getProcedure(name, hospital) {
+  return await Procedure.find({ name, hospital })
+    .then((p) => p)
+    .catch((err) => null);
+}
+
+async function getProcedureCount(name, hospital) {
+  let procedure = await getProcedure(name, hospital);
+  if (procedure) {
+    return procedure[0].count;
+  }
+  return 0;
+}
+
+async function updateProcedureCount(name, hospital) {
+  let procedure = await getProcedure(name, hospital);
+  if (procedure) {
+    procedure[0].count++;
+    procedure[0].save();
+  } else {
+    procedure = new Procedure({
+      name,
+      hospital,
+      count: 1,
+    });
+    procedure.save();
+  }
+}
+
 module.exports = {
   loadProcedures,
+  loadTotalData,
+  allProcedures,
+  getProcedure,
+  getProcedureCount,
+  updateProcedureCount,
   PROCEDURES,
 };
