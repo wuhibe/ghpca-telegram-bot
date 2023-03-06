@@ -21,7 +21,7 @@ async function loadProcedures() {
 
 async function loadTotalData() {
   let response = await axios.get(`${sheetsUrl}`);
-  let data = await response;
+  let data = (await response).data;
   let procedures = [];
   for (let i = 1; i < data.length; i++) {
     for (let j = 1; j < data[i].length; j++) {

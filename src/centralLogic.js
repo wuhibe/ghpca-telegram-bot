@@ -61,7 +61,7 @@ async function processCommands(userId, first_name, username, text) {
   } else if (text == '/help') {
     sendMessage(userId, 'Available commands:\n\t/start\n\t/help\n\t/addRecord');
   } else if (text == '/addRecord') {
-    addNewRecord(userId);
+    await addNewRecord(userId);
   } else {
     sendMessage(
       userId,
@@ -140,10 +140,9 @@ function addRecord(id, patient) {
   sendMessage(id, 'Record added successfully.');
 }
 
-function addNewRecord(id) {
+async function addNewRecord(id) {
   addSession(id);
-  let procedures = allProcedures();
-
+  let procedures = await allProcedures();
   sendMessage(
     id,
     'Please select a procedure:',
