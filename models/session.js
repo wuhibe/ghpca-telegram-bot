@@ -24,9 +24,16 @@ const findSessionById = async (id) => {
     .catch((err) => null);
 };
 
+function updateSession(id, procedure='', hospital='') {
+  Session.findOneAndUpdate({ id: id }, { procedure: procedure, hospital: hospital, date: new Date() })
+    .then((p) => p)
+    .catch((err) => null);
+}
+
 module.exports = {
   Session,
   createSession,
   findSessionById,
+  updateSession,
   removeSessionById,
 };
