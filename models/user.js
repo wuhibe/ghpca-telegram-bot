@@ -1,4 +1,4 @@
-const mongoose = require("./database");
+const mongoose = require('./database');
 
 let userSchema = new mongoose.Schema({
   id: Number,
@@ -6,7 +6,7 @@ let userSchema = new mongoose.Schema({
   first_name: String,
   status: Number,
 });
-let User = mongoose.model("User", userSchema);
+let User = mongoose.model('User', userSchema);
 
 const createUser = (user) => {
   let usr = new User(user);
@@ -15,12 +15,12 @@ const createUser = (user) => {
 
 const findUserById = async (id) => {
   return await User.find({ id: id })
-    .then(p => p)
-    .catch(err => null);
+    .then((p) => p)
+    .catch((err) => null);
 };
 
 module.exports = {
   userModel: User,
   createUser: createUser,
-  findUserById: findUserById
+  findUserById: findUserById,
 };

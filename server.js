@@ -1,8 +1,8 @@
-const express = require("express");
+const express = require('express');
 
-const { setWebhook, getMe } = require("./src/telegram");
-const { parseRequest, handleCallbacks } = require("./src/centralLogic");
-const { loadProcedures } = require("./models/procedures");
+const { setWebhook, getMe } = require('./src/telegram');
+const { parseRequest, handleCallbacks } = require('./src/centralLogic');
+const { loadProcedures } = require('./models/procedures');
 
 const app = express();
 
@@ -15,16 +15,14 @@ app.get('/setWebHook', setWebhook);
 
 app.get('/bot', getMe);
 
-app.post("/", async (req, res) => {
+app.post('/', async (req, res) => {
   if (req.body.callback_query) {
     await handleCallbacks(req.body);
-  }
-  else {
+  } else {
     await parseRequest(req.body);
   }
-  return res.send("OK");
+  return res.send('OK');
 });
-
 
 async function startProcess() {
   procedures = await loadProcedures();
