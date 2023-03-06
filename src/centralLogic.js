@@ -143,13 +143,12 @@ function addRecord(id, patient) {
 async function addNewRecord(id) {
   addSession(id);
   let procedures = await allProcedures();
-  sendMessage(
-    id,
-    'Please select a procedure:',
-    procedures.map((item) => {
-      return [{ text: item.name, callback_data: `procedure_${item.name}` }];
-    })
-  );
+
+  let callBacks = procedures.map((item) => {
+    return [{ text: item.name, callback_data: `procedure_${item.name}` }];
+  });
+
+  sendMessage(id, 'Please select a procedure:', callBacks);
 }
 
 function recordMessage(id, text, date) {
@@ -212,4 +211,5 @@ function getPatient(id) {
 module.exports = {
   parseRequest,
   handleCallbacks,
+  addNewRecord,
 };
