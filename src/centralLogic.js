@@ -172,7 +172,7 @@ async function addNewRecord(id) {
 
 async function recordMessage(id, text, date) {
   let session = await getSession(id);
-  if (session && session.id) {
+  if (session && session.procedure && session.hospital) {
     let diff = date - Date.parse(session.date);
 
     // if its been >30 mins
