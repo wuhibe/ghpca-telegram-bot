@@ -37,7 +37,7 @@ async function allProcedures() {
   return await loadProcedures();
 }
 
-async function getProcedure(name, hospital=null) {
+async function getProcedure(name, hospital = null) {
   return await Procedure.findOne({ name: name, hospital: hospital })
     .then((p) => p)
     .catch((err) => null);
@@ -69,8 +69,10 @@ async function getProcedureDetail(procedure) {
 async function updateProcedureCount(name, hospital) {
   let procedure = await getProcedure(name, hospital);
   if (procedure) {
-    Procedure.findOneAndUpdate({ name: name, hospital: hospital },
-      { count: procedure.count + 1 })
+    Procedure.findOneAndUpdate(
+      { name: name, hospital: hospital },
+      { count: procedure.count + 1 }
+    )
       .then((p) => p)
       .catch((err) => null);
   } else {

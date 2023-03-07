@@ -46,6 +46,7 @@ async function parseRequest(data) {
 }
 
 async function processCommands(userId, first_name, username, text) {
+  text = text.toLowerCase();
   if (text == '/start') {
     if ((await isValidUser(userId)) == 1)
       sendMessage(
@@ -60,7 +61,7 @@ async function processCommands(userId, first_name, username, text) {
     }
   } else if (text == '/help') {
     sendMessage(userId, 'Available commands:\n\t/start\n\t/help\n\t/addRecord');
-  } else if (text == '/addRecord') {
+  } else if (text == '/addrecord') {
     await addNewRecord(userId);
   } else {
     sendMessage(
@@ -182,9 +183,11 @@ async function recordMessage(id, text, date) {
       return;
     }
     await completeRecord(id, text);
-  }
-  else {
-    sendMessage(id, 'Unknown command. Select /help to see the available commands.');
+  } else {
+    sendMessage(
+      id,
+      'Unknown command. Select /help to see the available commands.'
+    );
   }
 }
 
@@ -196,10 +199,12 @@ async function chooseHospital(id, msg, procedure) {
       msg,
       'Please select a hospital:',
       hospitals.map((name) => {
-        return [{
-          text: name,
-          callback_data: `hospital_${procedure}_${name}`,
-        }];
+        return [
+          {
+            text: name,
+            callback_data: `hospital_${procedure}_${name}`,
+          },
+        ];
       })
     );
   } else {
@@ -218,8 +223,10 @@ async function completeRecord(id, name) {
     id,
     `Do you want to add ${session.procedure} at ${session.hospital} for ${name}?`,
     [
-      [{ text: 'Yes', callback_data: `addRecord_${id}_${name}` },
-      { text: 'No', callback_data: `cancelRecord_${id}` }]
+      [
+        { text: 'Yes', callback_data: `addRecord_${id}_${name}` },
+        { text: 'No', callback_data: `cancelRecord_${id}` },
+      ],
     ]
   );
 }
