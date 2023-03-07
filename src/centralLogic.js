@@ -151,12 +151,19 @@ async function addNewRecord(id) {
 
   if (procedures && procedures.length != 0) {
     let callBacks = [];
+    let sa = [];
     for (let i = 0; i < procedures.length; i++) {
-      callBacks.push({
+      sa.push({
         text: procedures[i],
         callback_data: `procedure_${procedures[i]}`,
       });
+      if (i != 0 && i % 3 == 0) {
+        callBacks.push(sa);
+        sa = [];
+      }
     }
+    if (sa.length != 0) callBacks.push(sa);
+
     sendMessage(id, 'Please select a procedure:', callBacks);
   } else {
     sendMessage(id, "Something isn't right. Please try again later.");
@@ -189,10 +196,10 @@ async function chooseHospital(id, msg, procedure) {
       msg,
       'Please select a hospital:',
       hospitals.map((name) => {
-        return {
+        return [{
           text: name,
           callback_data: `hospital_${procedure}_${name}`,
-        };
+        }];
       })
     );
   } else {
@@ -211,8 +218,8 @@ async function completeRecord(id, name) {
     id,
     `Do you want to add ${session.procedure} at ${session.hospital} for ${name}?`,
     [
-      { text: 'Yes', callback_data: `addRecord_${id}_${name}` },
-      { text: 'No', callback_data: `cancelRecord_${id}` },
+      [{ text: 'Yes', callback_data: `addRecord_${id}_${name}` },
+      { text: 'No', callback_data: `cancelRecord_${id}` }]
     ]
   );
 }
