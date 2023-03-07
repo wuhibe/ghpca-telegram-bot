@@ -101,7 +101,7 @@ async function handleCallbacks(data) {
   } else if (message.startsWith('procedure')) {
     let procedure = message.split('_')[1];
     await updateSession(userId, procedure);
-    chooseHospital(userId, procedure, msg);
+    await chooseHospital(userId, msg, procedure);
   } else if (message.startsWith('hospital')) {
     let procedure = message.split('_')[1];
     let hospital = message.split('_')[2];
@@ -110,10 +110,11 @@ async function handleCallbacks(data) {
   } else if (message.startsWith('addRecord')) {
     let id = message.split('_')[1];
     let name = message.split('_')[2];
-    addRecord(id, name);
+    await addRecord(id, name);
+    await clearUserSession(id);
   } else if (message.startsWith('cancelRecord')) {
     let id = message.split('_')[1];
-    clearUserSession(id);
+    await clearUserSession(id);
     sendMessage(id, 'Record cancelled');
   } else if (message.startsWith('ignore')) {
     return;
@@ -124,20 +125,24 @@ async function handleCallbacks(data) {
   }
 }
 
-function addRecord(id, patient) {
-  let session = getSession(id);
-  let user = getUser(id);
-  let record = {
-    date: new Date(),
-    first_name: user.first_name,
-    username: user.username,
-    patient,
-    procedure: session.procedure,
-    hospital: session.hospital,
-  };
-  createRecord(record);
-  updateProcedureCount(session.procedure, session.hospital);
-  sendMessage(id, 'Record added successfully.');
+async function addRecord(id, patient) {
+  let session = await getSession(id);
+  if (session) {
+    let user = await getUser(id);
+    let record = {
+      date: new Date(),
+      first_name: user.first_name,
+      username: user.username,
+      patient,
+      procedure: session.procedure,
+      hospital: session.hospital,
+    };
+    createRecord(record);
+    updateProcedureCount(session.procedure, session.hospital);
+    sendMessage(id, 'Record added successfully.');
+  } else {
+    sendMessage(id, 'Something went wrong. Please try again.');
+  }
 }
 
 async function addNewRecord(id) {
@@ -145,45 +150,46 @@ async function addNewRecord(id) {
   let procedures = await allProcedures();
 
   if (procedures && procedures.length != 0) {
-    let callBacks = []
-    procedures.forEach(item => {
-      callBacks.push([{ text: item.name, callback_data: `procedure_${item.name}` }]);
-    });
-
+    let callBacks = [];
+    for (let i = 0; i < procedures.length; i++) {
+      callBacks.push({
+        text: procedures[i],
+        callback_data: `procedure_${procedures[i]}`,
+      });
+    }
     sendMessage(id, 'Please select a procedure:', callBacks);
   } else {
-    sendMessage(id, 'Something isn\'t right. Please try again later.');
+    sendMessage(id, "Something isn't right. Please try again later.");
   }
 }
 
-function recordMessage(id, text, date) {
+async function recordMessage(id, text, date) {
   let session = getSession(id);
-  let diff = date - Date.parse(session.date);
+  if (session) {
+    let diff = date - Date.parse(session.date);
 
-  // if its been >30 mins or the procedure hasn't been filled/doesn't exist
-  if (
-    Math.floor(diff / 1000 / 60) > 30 ||
-    PROCEDURES.indexOf(session.procedure) == -1
-  ) {
-    clearUserSession(id);
-    processCommands(id, '', '', '/help');
-    return;
+    // if its been >30 mins
+    if (Math.floor(diff / 1000 / 60) > 30) {
+      clearUserSession(id);
+      processCommands(id, '', '', '/help');
+      return;
+    }
+    await completeRecord(id, text);
   }
-  completeRecord(id, text);
+  return;
 }
 
-function chooseHospital(id, msg, procedure) {
-  let p = getProcedureDetail(procedure);
-  if (p) {
-    let hospitals = Object.keys(p);
+async function chooseHospital(id, msg, procedure) {
+  let hospitals = await getProcedureDetail(procedure);
+  if (hospitals && hospitals.length > 0) {
     editMessage(
       id,
       msg,
       'Please select a hospital:',
-      hospitals.map((item) => {
+      hospitals.map((name) => {
         return {
-          text: item,
-          callback_data: `hospital_${procedure}_${item}`,
+          text: name,
+          callback_data: `hospital_${procedure}_${name}`,
         };
       })
     );
@@ -197,8 +203,8 @@ function chooseHospital(id, msg, procedure) {
   }
 }
 
-function completeRecord(id, name) {
-  let session = getSession(id);
+async function completeRecord(id, name) {
+  let session = await getSession(id);
   sendMessage(
     id,
     `Do you want to add ${session.procedure} at ${session.hospital} for ${name}?`,

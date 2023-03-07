@@ -13,8 +13,8 @@ let sessionSchema = new mongoose.Schema({
 });
 let Session = mongoose.model('Session', sessionSchema);
 
-const removeSessionById = (id) => {
-  Session.deleteMany({ id: id });
+const removeSessionById = async (id) => {
+  await Session.deleteMany({ id: id });
 };
 
 const createSession = (session) => {

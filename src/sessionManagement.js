@@ -31,7 +31,7 @@ async function addSession(id, procedure = null, hospital = null) {
 }
 
 async function clearUserSession(id) {
-  removeSessionById(id);
+  await removeSessionById(id);
 }
 
 async function updateSession(id, procedure = null, hospital = null) {
