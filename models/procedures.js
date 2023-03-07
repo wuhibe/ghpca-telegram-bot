@@ -43,7 +43,7 @@ async function loadTotalData() {
   return procedures;
 }
 
-async function allProcedures(name) {
+async function allProcedures() {
   let procs = await loadTotalData();
   procs.filter(async (p) => {
     let detail = await getProcedure(p.name, p.hospital);
