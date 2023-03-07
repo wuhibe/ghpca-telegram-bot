@@ -164,8 +164,8 @@ async function addNewRecord(id) {
 }
 
 async function recordMessage(id, text, date) {
-  let session = getSession(id);
-  if (session) {
+  let session = await getSession(id);
+  if (session && session.id) {
     let diff = date - Date.parse(session.date);
 
     // if its been >30 mins
@@ -176,7 +176,9 @@ async function recordMessage(id, text, date) {
     }
     await completeRecord(id, text);
   }
-  return;
+  else {
+    sendMessage(id, 'Unknown command. Select /help to see the available commands.');
+  }
 }
 
 async function chooseHospital(id, msg, procedure) {
