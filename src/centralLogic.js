@@ -87,7 +87,7 @@ async function handleCallbacks(data) {
       adminID,
       `User ${callbackFname}(@${callbackUsername}) is added.`
     );
-    sendMessage(userId, 'You can now use the bot.');
+    sendMessage(id, 'You can now use the bot.');
   } else if (message.startsWith('blacklistUser')) {
     let id = message.split('_')[1];
     let callbackUsername = message.split('_')[2];
@@ -97,7 +97,7 @@ async function handleCallbacks(data) {
       adminID,
       `User ${callbackFname}(@${callbackUsername}) is blocked.`
     );
-    sendMessage(userId, 'You have been blocked.');
+    sendMessage(id, 'You have been blocked.');
   } else if (message.startsWith('procedure')) {
     let procedure = message.split('_')[1];
     await updateSession(userId, procedure);
