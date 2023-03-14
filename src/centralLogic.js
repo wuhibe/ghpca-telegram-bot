@@ -21,7 +21,6 @@ const {
 const {
   allProcedures,
   updateProcedureCount,
-  PROCEDURES,
   getProcedureDetail,
 } = require('../models/procedures');
 
@@ -55,7 +54,7 @@ async function processCommands(userId, first_name, username, text) {
       );
     else if ((await isValidUser(userId)) == 0) {
       sendMessage(userId, 'You are not registered to use this bot.');
-      adminAddUser(userId, first_name, username);
+      await adminAddUser(userId, first_name, username);
     } else {
       sendMessage(userId, 'You are blocked from using this bot.');
     }
@@ -182,7 +181,7 @@ async function recordMessage(id, text, date) {
       processCommands(id, '', '', '/help');
       return;
     }
-    await completeRecord(id, text);
+    await completeRecord(session.id, text);
   } else {
     sendMessage(
       id,
@@ -226,7 +225,7 @@ async function completeRecord(id, name) {
       [
         { text: 'Yes', callback_data: `addRecord_${id}_${name}` },
         { text: 'No', callback_data: `cancelRecord_${id}` },
-      ],
+      ]
     ]
   );
 }

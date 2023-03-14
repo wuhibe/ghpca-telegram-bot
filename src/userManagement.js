@@ -45,15 +45,17 @@ function adminAddUser(userId, first_name, username) {
     adminID,
     `${first_name}(@${username}) is trying to use the bot.\nDo you wish to add this user?`,
     [
-      {
-        text: 'Yes',
-        callback_data: `addUser_${userId}_${username}_${first_name}`,
-      },
-      { text: 'No', callback_data: `ignore` },
-      {
-        text: 'Block',
-        callback_data: `blacklistUser_${userId}_${username}_${first_name}`,
-      },
+      [
+        {
+          text: 'Yes',
+          callback_data: `addUser_${userId}_${username}_${first_name}`,
+        },
+        { text: 'No', callback_data: `ignore` },
+        {
+          text: 'Block',
+          callback_data: `blacklistUser_${userId}_${username}_${first_name}`,
+        },
+      ],
     ]
   );
 }
