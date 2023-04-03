@@ -1,6 +1,6 @@
 require('dotenv').config();
 
-const { sendMessage, editMessage } = require('./telegram');
+const Telegram = require('./Telegram/telegram');
 const { createRecord } = require('./recordData');
 
 const {
@@ -40,7 +40,7 @@ async function parseRequest(data) {
     }
     recordMessage(userId, text, new Date());
   } catch (e) {
-    sendMessage(adminID, JSON.stringify(e));
+    Telegram.sendMessage(adminID, JSON.stringify(e));
   }
 }
 
@@ -48,22 +48,22 @@ async function processCommands(userId, first_name, username, text) {
   text = text.toLowerCase();
   if (text == '/start') {
     if ((await isValidUser(userId)) == 1)
-      sendMessage(
+      Telegram.sendMessage(
         userId,
         'Welcome to the bot. Select /help to see the available commands.'
       );
     else if ((await isValidUser(userId)) == 0) {
-      sendMessage(userId, 'You are not registered to use this bot.');
+      Telegram.sendMessage(userId, 'You are not registered to use this bot.');
       await adminAddUser(userId, first_name, username);
     } else {
-      sendMessage(userId, 'You are blocked from using this bot.');
+      Telegram.sendMessage(userId, 'You are blocked from using this bot.');
     }
   } else if (text == '/help') {
-    sendMessage(userId, 'Available commands:\n\t/start\n\t/help\n\t/addRecord');
+    Telegram.sendMessage(userId, 'Available commands:\n\t/start\n\t/help\n\t/addRecord');
   } else if (text == '/addrecord') {
     await addNewRecord(userId);
   } else {
-    sendMessage(
+    Telegram.sendMessage(
       userId,
       'Unknown command. Select /help to see the available commands.'
     );
@@ -76,28 +76,28 @@ async function handleCallbacks(data) {
   let userId = data.callback_query.message.chat.id;
   let msg = data.callback_query.message.message_id;
 
-  editMessage(userId, msg, data.callback_query.message.text, []);
+  Telegram.editMessage(userId, msg, data.callback_query.message.text, []);
 
   if (message.startsWith('addUser')) {
     let id = message.split('_')[1];
     let callbackUsername = message.split('_')[2];
     let callbackFname = message.split('_')[3];
     await addUser(+id, callbackUsername, callbackFname);
-    sendMessage(
+    Telegram.sendMessage(
       adminID,
       `User ${callbackFname}(@${callbackUsername}) is added.`
     );
-    sendMessage(id, 'You can now use the bot.');
+    Telegram.sendMessage(id, 'You can now use the bot.');
   } else if (message.startsWith('blacklistUser')) {
     let id = message.split('_')[1];
     let callbackUsername = message.split('_')[2];
     let callbackFname = message.split('_')[3];
     await blacklistUser(+id, callbackUsername, callbackFname);
-    sendMessage(
+    Telegram.sendMessage(
       adminID,
       `User ${callbackFname}(@${callbackUsername}) is blocked.`
     );
-    sendMessage(id, 'You have been blocked.');
+    Telegram.sendMessage(id, 'You have been blocked.');
   } else if (message.startsWith('procedure')) {
     let procedure = message.split('_')[1];
     await updateSession(userId, procedure);
@@ -115,12 +115,12 @@ async function handleCallbacks(data) {
   } else if (message.startsWith('cancelRecord')) {
     let id = message.split('_')[1];
     await clearUserSession(id);
-    sendMessage(id, 'Record cancelled');
+    Telegram.sendMessage(id, 'Record cancelled');
   } else if (message.startsWith('ignore')) {
     return;
   } else {
-    sendMessage(adminID, JSON.stringify(data));
-    sendMessage(userId, 'Something went wrong. Please try again.');
+    Telegram.sendMessage(adminID, JSON.stringify(data));
+    Telegram.sendMessage(userId, 'Something went wrong. Please try again.');
     clearUserSession(userId);
   }
 }
@@ -139,9 +139,9 @@ async function addRecord(id, patient) {
     };
     createRecord(record);
     updateProcedureCount(session.procedure, session.hospital);
-    sendMessage(id, 'Record added successfully.');
+    Telegram.sendMessage(id, 'Record added successfully.');
   } else {
-    sendMessage(id, 'Something went wrong. Please try again.');
+    Telegram.sendMessage(id, 'Something went wrong. Please try again.');
   }
 }
 
@@ -164,9 +164,9 @@ async function addNewRecord(id) {
     }
     if (sa.length != 0) callBacks.push(sa);
 
-    sendMessage(id, 'Please select a procedure:', callBacks);
+    Telegram.sendMessage(id, 'Please select a procedure:', callBacks);
   } else {
-    sendMessage(id, "Something isn't right. Please try again later.");
+    Telegram.sendMessage(id, "Something isn't right. Please try again later.");
   }
 }
 
@@ -183,7 +183,7 @@ async function recordMessage(id, text, date) {
     }
     await completeRecord(session.id, text);
   } else {
-    sendMessage(
+    Telegram.sendMessage(
       id,
       'Unknown command. Select /help to see the available commands.'
     );
@@ -193,7 +193,7 @@ async function recordMessage(id, text, date) {
 async function chooseHospital(id, msg, procedure) {
   let hospitals = await getProcedureDetail(procedure);
   if (hospitals && hospitals.length > 0) {
-    editMessage(
+    Telegram.editMessage(
       id,
       msg,
       'Please select a hospital:',
@@ -208,7 +208,7 @@ async function chooseHospital(id, msg, procedure) {
     );
   } else {
     clearUserSession(id);
-    editMessage(
+    Telegram.editMessage(
       id,
       msg,
       'This Investigation/Service has been used up for this month.'
@@ -218,7 +218,7 @@ async function chooseHospital(id, msg, procedure) {
 
 async function completeRecord(id, name) {
   let session = await getSession(id);
-  sendMessage(
+  Telegram.sendMessage(
     id,
     `Do you want to add ${session.procedure} at ${session.hospital} for ${name}?`,
     [
@@ -231,7 +231,7 @@ async function completeRecord(id, name) {
 }
 
 function getPatient(id) {
-  sendMessage(id, `Please enter the patient's name:`);
+  Telegram.sendMessage(id, `Please enter the patient's name:`);
 }
 
 module.exports = {

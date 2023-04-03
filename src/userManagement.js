@@ -5,7 +5,7 @@ const {
   findUserById,
   updateUserStatus,
 } = require('../models/user');
-const { sendMessage } = require('./telegram');
+const Telegram = require('./telegram');
 
 const adminID = process.env.ADMIN_ID;
 
@@ -41,7 +41,7 @@ async function addUser(id, username, first_name) {
 }
 
 function adminAddUser(userId, first_name, username) {
-  sendMessage(
+  Telegram.sendMessage(
     adminID,
     `${first_name}(@${username}) is trying to use the bot.\nDo you wish to add this user?`,
     [

@@ -1,6 +1,6 @@
 const express = require('express');
 
-const { setWebhook, getMe } = require('./src/telegram');
+const Telegram = require('./src/Telegram/telegram');
 const { parseRequest, handleCallbacks } = require('./src/centralLogic');
 const { loadProcedures } = require('./models/procedures');
 
@@ -14,9 +14,9 @@ app.get('/', (req, res) => {
   res.send('Hello World');
 });
 
-app.get('/setWebHook', setWebhook);
+app.get('/setWebHook', Telegram.setWebhook);
 
-app.get('/bot', getMe);
+app.get('/bot', Telegram.getMe);
 
 app.post('/', async (req, res) => {
   if (req.body.callback_query) {
