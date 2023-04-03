@@ -5,7 +5,7 @@ const {
   findUserById,
   updateUserStatus,
 } = require('../models/user');
-const Telegram = require('./telegram');
+const Telegram = require('./Telegram/telegram');
 
 const adminID = process.env.ADMIN_ID;
 

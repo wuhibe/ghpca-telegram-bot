@@ -46,29 +46,32 @@ async function parseRequest(data) {
 
 async function processCommands(userId, first_name, username, text) {
   text = text.toLowerCase();
-  if (text == '/start') {
-    if ((await isValidUser(userId)) == 1)
+  switch (text) {
+    case '/start':
+      if ((await isValidUser(userId)) == 1)
+        Telegram.sendMessage(
+          userId,
+          'Welcome to the bot. Select /help to see the available commands.'
+        );
+      else if ((await isValidUser(userId)) == 0) {
+        Telegram.sendMessage(userId, 'You are not registered to use this bot.');
+        adminAddUser(userId, first_name, username);
+      } else {
+        Telegram.sendMessage(userId, 'You are blocked from using this bot.');
+      }
+      break;
+    case '/help':
+      Telegram.sendMessage(userId, 'Available commands:\n\t/start\n\t/help\n\t/addRecord');
+      break;
+    case '/addrecord':
+      addNewRecord(userId);
+      break;
+    default:
       Telegram.sendMessage(
         userId,
-        'Welcome to the bot. Select /help to see the available commands.'
+        'Unknown command. Select /help to see the available commands.'
       );
-    else if ((await isValidUser(userId)) == 0) {
-      Telegram.sendMessage(userId, 'You are not registered to use this bot.');
-      await adminAddUser(userId, first_name, username);
-    } else {
-      Telegram.sendMessage(userId, 'You are blocked from using this bot.');
-    }
-  } else if (text == '/help') {
-    Telegram.sendMessage(userId, 'Available commands:\n\t/start\n\t/help\n\t/addRecord');
-  } else if (text == '/addrecord') {
-    await addNewRecord(userId);
-  } else {
-    Telegram.sendMessage(
-      userId,
-      'Unknown command. Select /help to see the available commands.'
-    );
   }
-  return;
 }
 
 async function handleCallbacks(data) {
