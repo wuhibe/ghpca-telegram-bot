@@ -19,11 +19,9 @@ const createUser = (user) => {
 };
 
 const findUserById = async (id) => {
-  let data = await User.findOne({ id: id })
+  return await User.findOne({ id: id })
     .then((p) => p)
     .catch((err) => null);
-  data = await data;
-  return data;
 };
 
 function updateUserStatus(id, status) {

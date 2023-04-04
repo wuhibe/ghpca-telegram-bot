@@ -18,16 +18,10 @@ let procedureSchema = new mongoose.Schema({
 let Procedure = mongoose.model('Procedure', procedureSchema);
 
 async function loadProcedures() {
-  let procs = await loadProcedureNames();
-  PROCEDURES = procs;
-  update = new Date();
-  return procs;
-}
-
-async function loadProcedureNames() {
   let response = await axios.get(`${sheetsUrl}?route=procedures`);
-  let data = (await response).data;
-  return data;
+  PROCEDURES = (await response).data;
+  update = new Date();
+  return PROCEDURES;
 }
 
 async function allProcedures() {
@@ -46,7 +40,7 @@ async function getProcedure(name, hospital = null) {
 async function getProcedureCount(name, hospital) {
   let procedure = await getProcedure(name, hospital);
   if (procedure) {
-    return procedure[0].count;
+    return procedure.count;
   }
   return 0;
 }
@@ -86,11 +80,9 @@ async function updateProcedureCount(name, hospital) {
 }
 
 module.exports = {
-  loadProcedures,
   allProcedures,
   getProcedure,
   getProcedureDetail,
   getProcedureCount,
   updateProcedureCount,
-  PROCEDURES,
 };
