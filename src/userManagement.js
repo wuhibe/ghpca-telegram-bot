@@ -48,12 +48,12 @@ function adminAddUser(userId, first_name, username) {
       [
         {
           text: 'Yes',
-          callback_data: `addUser_${userId}_${username}_${first_name}`,
+          callback_data: `addUser_@@_${userId}_@@_${username}_@@_${first_name}`,
         },
         { text: 'No', callback_data: `ignore` },
         {
           text: 'Block',
-          callback_data: `blacklistUser_${userId}_${username}_${first_name}`,
+          callback_data: `blacklistUser_@@_${userId}_@@_${username}_@@_${first_name}`,
         },
       ],
     ]

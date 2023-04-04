@@ -81,10 +81,9 @@ async function handleCallbacks(data) {
 
   Telegram.editMessage(userId, msg, data.callback_query.message.text, []);
 
+  const cb_data = message.split('_@@_');
   if (message.startsWith('addUser')) {
-    let id = message.split('_')[1];
-    let callbackUsername = message.split('_')[2];
-    let callbackFname = message.split('_')[3];
+    let [_, id, callbackUsername, callbackFname] = cb_data;
     await addUser(+id, callbackUsername, callbackFname);
     Telegram.sendMessage(
       adminID,
@@ -92,9 +91,7 @@ async function handleCallbacks(data) {
     );
     Telegram.sendMessage(id, 'You can now use the bot.');
   } else if (message.startsWith('blacklistUser')) {
-    let id = message.split('_')[1];
-    let callbackUsername = message.split('_')[2];
-    let callbackFname = message.split('_')[3];
+    let [_, id, callbackUsername, callbackFname] = cb_data;
     await blacklistUser(+id, callbackUsername, callbackFname);
     Telegram.sendMessage(
       adminID,
@@ -102,21 +99,19 @@ async function handleCallbacks(data) {
     );
     Telegram.sendMessage(id, 'You have been blocked.');
   } else if (message.startsWith('procedure')) {
-    let procedure = message.split('_')[1];
+    let procedure = cb_data[1];
     await updateSession(userId, procedure);
-    await chooseHospital(userId, msg, procedure);
+    chooseHospital(userId, msg, procedure);
   } else if (message.startsWith('hospital')) {
-    let procedure = message.split('_')[1];
-    let hospital = message.split('_')[2];
+    let [_, procedure, hospital] = cb_data;
     await updateSession(userId, procedure, hospital);
     getPatient(userId);
   } else if (message.startsWith('addrecord')) {
-    let id = message.split('_')[1];
-    let name = message.split('_')[2];
+    let [_, id, name] = cb_data;
     await addRecord(id, name);
-    await clearUserSession(id);
+    clearUserSession(id);
   } else if (message.startsWith('cancelRecord')) {
-    let id = message.split('_')[1];
+    let id = cb_data[1];
     await clearUserSession(id);
     Telegram.sendMessage(id, 'Record cancelled');
   } else if (message.startsWith('ignore')) {
@@ -158,7 +153,7 @@ async function addNewRecord(id) {
     for (let i = 0; i < procedures.length; i++) {
       sa.push({
         text: procedures[i],
-        callback_data: `procedure_${procedures[i]}`,
+        callback_data: `procedure_@@_${procedures[i]}`,
       });
       if (i != 0 && i % 3 == 0) {
         callBacks.push(sa);
@@ -204,7 +199,7 @@ async function chooseHospital(id, msg, procedure) {
         return [
           {
             text: name,
-            callback_data: `hospital_${procedure}_${name}`,
+            callback_data: `hospital_@@_${procedure}_@@_${name}`,
           },
         ];
       })
@@ -226,8 +221,8 @@ async function completeRecord(id, name) {
     `Do you want to add ${session.procedure} at ${session.hospital} for ${name}?`,
     [
       [
-        { text: 'Yes', callback_data: `addrecord_${id}_${name}` },
-        { text: 'No', callback_data: `cancelRecord_${id}` },
+        { text: 'Yes', callback_data: `addrecord_@@_${id}_@@_${name}` },
+        { text: 'No', callback_data: `cancelRecord_@@_${id}` },
       ]
     ]
   );
