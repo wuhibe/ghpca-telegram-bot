@@ -2,7 +2,6 @@ const express = require('express');
 
 const Telegram = require('./src/Telegram/telegram');
 const { parseRequest, handleCallbacks } = require('./src/centralLogic');
-const { loadProcedures } = require('./models/procedures');
 
 const app = express();
 
@@ -28,7 +27,7 @@ app.post('/', async (req, res) => {
 });
 
 async function startProcess() {
-  await loadProcedures();
+  await Telegram.setCommands();
   app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
   });

@@ -61,7 +61,7 @@ async function processCommands(userId, first_name, username, text) {
       }
       break;
     case '/help':
-      Telegram.sendMessage(userId, 'Available commands:\n\t/start\n\t/help\n\t/addRecord');
+      Telegram.sendMessage(userId, 'Available commands:\n\t/start\n\t/help\n\t/addrecord');
       break;
     case '/addrecord':
       addNewRecord(userId);
@@ -110,7 +110,7 @@ async function handleCallbacks(data) {
     let hospital = message.split('_')[2];
     await updateSession(userId, procedure, hospital);
     getPatient(userId);
-  } else if (message.startsWith('addRecord')) {
+  } else if (message.startsWith('addrecord')) {
     let id = message.split('_')[1];
     let name = message.split('_')[2];
     await addRecord(id, name);
@@ -226,7 +226,7 @@ async function completeRecord(id, name) {
     `Do you want to add ${session.procedure} at ${session.hospital} for ${name}?`,
     [
       [
-        { text: 'Yes', callback_data: `addRecord_${id}_${name}` },
+        { text: 'Yes', callback_data: `addrecord_${id}_${name}` },
         { text: 'No', callback_data: `cancelRecord_${id}` },
       ]
     ]

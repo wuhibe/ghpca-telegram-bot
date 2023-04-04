@@ -59,6 +59,25 @@ class Telegram {
       .then((response) => response.data)
       .catch((error) => error);
   }
+
+  static async setCommands() {
+    const commands = [
+      {
+        command: "start",
+        description: "Start using bot"
+      },
+      {
+        command: "help",
+        description: "List of available commands:\n /start\n /help\n /addrecord"
+      },
+      {
+        command: "addrecord",
+        description: "Add new record"
+      }
+    ];
+    const url = `${telegramUrl}/setMyCommands`;
+    await axios.post(url, commands).then((response) => response.data).catch((error) => error);
+  }
 }
 
 module.exports = Telegram;
