@@ -28,10 +28,10 @@ const adminID = process.env.ADMIN_ID;
 
 async function parseRequest(data) {
   try {
-    var text = data.message.text;
-    var userId = data.message.chat.id;
-    var first_name = data.message.chat.first_name;
-    var username = data.message.chat.username;
+    const text = data.message.text;
+    const userId = data.message.chat.id;
+    const first_name = data.message.chat.first_name;
+    const username = data.message.chat.username;
 
     if (text.startsWith('/')) {
       return processCommands(userId, first_name, username, text);
@@ -61,7 +61,10 @@ async function processCommands(userId, first_name, username, text) {
       }
       break;
     case '/help':
-      Telegram.sendMessage(userId, 'Available commands:\n\t/start\n\t/help\n\t/addrecord');
+      Telegram.sendMessage(
+        userId,
+        'Available commands:\n\t/start\n\t/help\n\t/addrecord'
+      );
       break;
     case '/addrecord':
       addNewRecord(userId);
@@ -223,7 +226,7 @@ async function completeRecord(id, name) {
       [
         { text: 'Yes', callback_data: `addrecord_@@_${id}_@@_${name}` },
         { text: 'No', callback_data: `cancelRecord_@@_${id}` },
-      ]
+      ],
     ]
   );
 }
